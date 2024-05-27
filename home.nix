@@ -576,6 +576,8 @@
         margin = "20 20 0 20";
 
         battery = {
+          format-charging =
+            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
           format-plugged =
             "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
           format = "{capacity}% <span rise='250' size='large'> {icon}</span>";
@@ -604,9 +606,7 @@
           };
         };
 
-        "hyprland/language" = {
-          format = "{short}";
-        };
+        "hyprland/language" = { format = "{short}"; };
 
         clock = {
           format = "{:%I:%M %p} <span rise='250' size='large'> </span>";
@@ -614,7 +614,8 @@
 
         tray = { spacing = 10; };
 
-        modules-right = [ "backlight" "pulseaudio" "battery" "hyprland/language" "tray" ];
+        modules-right =
+          [ "backlight" "pulseaudio" "battery" "hyprland/language" "tray" ];
         modules-center = [ "clock" ];
         modules-left = [ "hyprland/workspaces" ];
 
@@ -732,6 +733,11 @@
 
       #battery.plugged {
       	color: #ECEFF4;
+      	background: #A3BE8C;
+      }
+
+      #battery.charging {
+        color: #ECEFF4;
       	background: #A3BE8C;
       }
 
