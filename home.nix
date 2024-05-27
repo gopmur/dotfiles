@@ -350,6 +350,7 @@
     userName = "Ali Jafari";
     userEmail = "ali81jafari@outlook.com";
     extraConfig = {
+      pull.rebase = true;
       credential.helper = "store";
       core.editor = "code";
     };
@@ -364,8 +365,7 @@
         "swww img /home/ali/Downloads/paul-pastourmatzis-KT3WlrL_bsg-unsplash.jpg"
         "swww img /home/ali/Downloads/paul-pastourmatzis-KT3WlrL_bsg-unsplash.jpg"
         "hyprctl setcursor Nordic-cursors 24"
-        "${pkgs.polkit-kde-agent}/libexec/polkit-kde-authentication-agent-1"
-        "${pkgs.kwallet-pam}/libexec/pam_kwallet_init"
+        "${pkgs.polkit_gnome}/libexec/polkit-gnome-authentication-agent-1"
         "waybar"
         "nm-applet --indicator"
         "blueman-applet"
@@ -377,7 +377,7 @@
       env = [ "HYPRCURSOR_SIZE, 24" "HYPRCURSOR_THEME, Nordic-cursors" ];
 
       input = {
-        kb_layout = "us,ir";
+        kb_layout = "us,ir,de";
         # kb_variant =
         # kb_model =
         kb_options = "grp:win_space_toggle";
@@ -470,9 +470,9 @@
       # windowrulev2 = float,class:^(kitty)$,title:^(kitty)$
       # See https://wiki.hyprland.org/Configuring/Window-Rules/ for more
       windowrule = [
-        "float,polkit-kde-authentication-agent-1"
-        "center,polkit-kde-authentication-agent-1"
-        "size 500 500,polkit-kde-authentication-agent-1"
+        "float,polkit-gnome-authentication-agent-1"
+        "center,polkit-gnome-authentication-agent-1"
+        "size 400 500,polkit-gnome-authentication-agent-1"
       ];
 
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
@@ -604,13 +604,17 @@
           };
         };
 
+        "hyprland/language" = {
+          format = "{short}";
+        };
+
         clock = {
           format = "{:%I:%M %p} <span rise='250' size='large'> </span>";
         };
 
         tray = { spacing = 10; };
 
-        modules-right = [ "backlight" "pulseaudio" "battery" "tray" ];
+        modules-right = [ "backlight" "pulseaudio" "battery" "hyprland/language" "tray" ];
         modules-center = [ "clock" ];
         modules-left = [ "hyprland/workspaces" ];
 
@@ -708,11 +712,16 @@
       #custom-media,
       #tray,
       #mode,
+      #language,
       #idle_inhibitor {
       	padding: 0 15px;
       	margin-right: 5px;
       	margin-left: 5px;
       	border-radius: 2rem;
+      }
+
+      #language {
+        background: #8FBCBB;
       }
 
       #battery {
@@ -948,7 +957,6 @@
       base16_normal = {
         msg_urgency = "normal";
         background = "#434c5e";
-        foreground = "#e5e9f0";
       };
 
       base16_critical = {
@@ -965,6 +973,16 @@
       color_theme = "Default";
       theme_background = false;
     };
+  };
+
+  gtk = {
+    enable = true;
+    cursorTheme.name = "Nordic-cursors";
+    cursorTheme.package = pkgs.nordic;
+    iconTheme.name = "Adwaita";
+    iconTheme.package = pkgs.gnome.adwaita-icon-theme;
+    theme.name = "Nordic";
+    theme.package = pkgs.nordic;
   };
 
 }
