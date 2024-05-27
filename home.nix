@@ -665,6 +665,7 @@
       	color: rgba(0, 0, 0, 0);
       	background-color: #ECEFF4;
       	padding: 0;
+        padding-top: 1px;
       	padding-left: 1px;
       	margin-left: 5px;
       	margin-top: 5px;
