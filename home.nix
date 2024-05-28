@@ -408,7 +408,7 @@
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
 
         rounding = 10;
-
+  
         blur = {
           enabled = true;
           size = 3;
@@ -473,7 +473,11 @@
         "float,polkit-gnome-authentication-agent-1"
         "center,polkit-gnome-authentication-agent-1"
         "size 400 500,polkit-gnome-authentication-agent-1"
+        "noblur,^(Google-chrome)$"
       ];
+
+      layerrule = "ignorezero, notifications";
+      blurls = "notifications";
 
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
       "$mainMod" = "SUPER";
@@ -951,25 +955,28 @@
     enable = true;
     settings = {
       global = {
-        frame_color = "#e5e9f0";
-        separator_color = "#e5e9f0";
+        frame_color = "#ECEFF4";
+        separator_color = "#ECEFF4";
+        corner_radius = "10";
+        gap_size = "15";
+        frame_width = "1";
+        origin = "top-right"; 
+        offset = "20x20";
       };
 
       base16_low = {
         msg_urgency = "low";
-        background = "#3b4252";
-        foreground = "#4c566a";
+        background = "#3b4252a0";
       };
 
       base16_normal = {
         msg_urgency = "normal";
-        background = "#434c5e";
+        background = "#4C566AA0";
       };
 
       base16_critical = {
         msg_urgency = "critical";
-        background = "#bf616a";
-        foreground = "#eceff4";
+        background = "#bf616aa0";
       };
     };
   };
