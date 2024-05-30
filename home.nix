@@ -383,7 +383,7 @@
         kb_options = "grp:win_space_toggle";
         # kb_rules =
 
-        follow_mouse = 1;
+        follow_mouse = 0;
 
         touchpad = { natural_scroll = "yes"; };
 
@@ -395,8 +395,8 @@
         gaps_in = 5;
         gaps_out = [ 5 20 20 20 ];
         border_size = 2;
-        "col.active_border" = "rgb(5E81AC)";
-        "col.inactive_border" = "rgba(595959aa)";
+        "col.active_border" = "rgb(88C0D0)";
+        "col.inactive_border" = "rgb(4C566A)";
 
         layout = "dwindle";
 
@@ -408,7 +408,7 @@
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
 
         rounding = 10;
-  
+
         blur = {
           enabled = true;
           size = 3;
@@ -452,7 +452,7 @@
       };
       gestures = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
-        workspace_swipe = "off";
+        workspace_swipe = "on";
       };
 
       misc = {
@@ -775,6 +775,7 @@
     enable = true;
     theme = "Nord";
     settings = {
+      shell = "zsh";
       enable_audio_bell = "no";
       cursor_shape = "beam";
       window_padding_width = 15;
@@ -960,7 +961,7 @@
         corner_radius = "10";
         gap_size = "15";
         frame_width = "1";
-        origin = "top-right"; 
+        origin = "top-right";
         offset = "20x20";
       };
 
@@ -993,8 +994,8 @@
     enable = true;
     cursorTheme.name = "Nordic-cursors";
     cursorTheme.package = pkgs.nordic;
-    iconTheme.name = "Adwaita";
-    iconTheme.package = pkgs.gnome.adwaita-icon-theme;
+    iconTheme.name = "Vimix";
+    iconTheme.package = pkgs.vimix-icon-theme;
     theme.name = "Nordic";
     theme.package = pkgs.nordic;
   };
