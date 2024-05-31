@@ -583,9 +583,9 @@
           format-critical =
             "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
           format-charging =
-            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
+            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'> 󱐋</span>";
           format-plugged =
-            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
+            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'> 󱐋</span>";
           format = "{capacity}% <span rise='250' size='large'> {icon}</span>";
           format-icons = [ "" "" "" "" "" ];
           max-length = 25;
@@ -746,11 +746,13 @@
       }
 
       #battery.plugged {
+        padding-right: 15px;
       	color: #ECEFF4;
       	background: #A3BE8C;
       }
 
       #battery.charging {
+        padding-right: 15px;
         color: #ECEFF4;
       	background: #A3BE8C;
       }
