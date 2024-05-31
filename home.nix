@@ -383,7 +383,7 @@
         kb_options = "grp:win_space_toggle";
         # kb_rules =
 
-        follow_mouse = 0;
+        follow_mouse = 1;
 
         touchpad = { natural_scroll = "yes"; };
 
@@ -606,12 +606,12 @@
           format = "{volume}% <span size='large'> {icon}</span>";
           format-icons = {
             headphones = "";
-            handsfree = "";
-            headset = "";
+            handsfree = "";
+            headset = "";
             phone = "";
             portable = "";
             car = "";
-            default = [ "" ];
+            default = [ "" "" "" ];
           };
         };
 
@@ -742,6 +742,7 @@
       }
 
       #battery.critical {
+        padding-right: 15px;
         background: #BF616A;
       }
 
