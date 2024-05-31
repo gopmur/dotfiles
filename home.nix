@@ -580,6 +580,8 @@
         margin = "20 20 0 20";
 
         battery = {
+          format-critical =
+            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
           format-charging =
             "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
           format-plugged =
@@ -588,6 +590,9 @@
           format-icons = [ "" "" "" "" "" ];
           max-length = 25;
           interval = 1;
+          states = {
+            critical = 15;
+          };
         };
 
         backlight = {
@@ -734,6 +739,10 @@
       	background: #88C0D0;
       	color: #ECEFF4;
       	padding-right: 25px;
+      }
+
+      #battery.critical {
+        background: #BF616A;
       }
 
       #battery.plugged {
