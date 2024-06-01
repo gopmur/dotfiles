@@ -474,6 +474,8 @@
         "center,polkit-gnome-authentication-agent-1"
         "size 400 500,polkit-gnome-authentication-agent-1"
         "noblur,^(Google-chrome)$"
+        "opacity 0.7,org.gnome.Nautilus"
+        "xray,org.gnome.Nautilus"
       ];
 
       layerrule = "ignorezero, notifications";
@@ -590,9 +592,7 @@
           format-icons = [ "" "" "" "" "" ];
           max-length = 25;
           interval = 1;
-          states = {
-            critical = 15;
-          };
+          states = { critical = 15; };
         };
 
         backlight = {
@@ -623,8 +623,21 @@
 
         tray = { spacing = 10; };
 
-        modules-right =
-          [ "backlight" "pulseaudio" "battery" "hyprland/language" "tray" ];
+        "custom/power" = {
+          interval = "once";
+          exec = "echo ";
+          format = "{}";
+          on-click = "wlogout";
+        };
+
+        modules-right = [
+          "backlight"
+          "pulseaudio"
+          "battery"
+          "hyprland/language"
+          "tray"
+          "custom/power"
+        ];
         modules-center = [ "clock" ];
         modules-left = [ "hyprland/workspaces" ];
 
@@ -724,6 +737,7 @@
       #tray,
       #mode,
       #language,
+      #custom-power,
       #idle_inhibitor {
       	padding: 0 15px;
       	margin-right: 5px;
@@ -733,6 +747,12 @@
 
       #language {
         background: #8FBCBB;
+      }
+
+      #custom-power {
+        padding: 0 10px;
+        padding-right: 13px;
+        background: #BF616A;
       }
 
       #battery {
@@ -1010,6 +1030,58 @@
     iconTheme.package = pkgs.vimix-icon-theme;
     theme.name = "Nordic";
     theme.package = pkgs.nordic;
+  };
+
+  programs.wlogout = {
+    enable = true;
+    style = ''
+            * {
+      	background-image: none;
+      }
+      window {
+      	background-color: rgba(46, 52, 64, 0.9);
+      }
+      button {
+      	background-color: #2e3440;
+      	border-style: solid;
+      	border-width: 0px;
+      	border-radius: 0;
+      	background-repeat: no-repeat;
+      	background-position: center;
+      	background-size: 25%;
+      	color: #5e81ac;
+      }
+
+      button:focus, button:active, button:hover {
+      	background-color: #4c566a;
+      	color: #81a1c1;
+      	outline-style: none;
+      }
+
+      #lock {
+          background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/lock.png"));
+      }
+
+      #logout {
+          background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/logout.png"));
+      }
+
+      #suspend {
+          background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/suspend.png"));
+      }
+
+      #hibernate {
+          background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/hibernate.png"));
+      }
+
+      #shutdown {
+          background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/shutdown.png"));
+      }
+
+      #reboot {
+          background-image: image(url("${pkgs.wlogout}/share/wlogout/icons/reboot.png"));
+      }
+    '';
   };
 
 }
