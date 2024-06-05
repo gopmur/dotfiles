@@ -256,7 +256,7 @@
     zsh = {
       enable = true;
       enableCompletion = true;
-      enableAutosuggestions = true;
+      autosuggestion.enable = true;
       syntaxHighlighting.enable = true;
 
       shellAliases = {
@@ -474,8 +474,6 @@
         "center,polkit-gnome-authentication-agent-1"
         "size 400 500,polkit-gnome-authentication-agent-1"
         "noblur,^(Google-chrome)$"
-        "opacity 0.7,org.gnome.Nautilus"
-        "xray,org.gnome.Nautilus"
       ];
 
       layerrule = "ignorezero, notifications";
@@ -582,6 +580,7 @@
         margin = "20 20 0 20";
 
         battery = {
+          tooltip = false;
           format-critical =
             "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
           format-charging =
@@ -596,12 +595,14 @@
         };
 
         backlight = {
+          tooltip = false;
           # device = "intel_backlight",
           format = "{percent}% <span rise='250' size='large'> {icon}</span>";
           format-icons = "";
         };
 
         pulseaudio = {
+          tooltip = false;
           format-muted = "<span size='large'>󰸈</span>";
           format = "{volume}% <span size='large'> {icon}</span>";
           format-icons = {
@@ -615,7 +616,10 @@
           };
         };
 
-        "hyprland/language" = { format = "{short}"; };
+        "hyprland/language" = {
+          tooltip = false;
+          format = "{short}";
+        };
 
         clock = {
           format = "{:%I:%M %p} <span rise='250' size='large'> </span>";
@@ -624,6 +628,7 @@
         tray = { spacing = 10; };
 
         "custom/power" = {
+          tooltip = false;
           interval = "once";
           exec = "echo ";
           format = "{}";
@@ -751,7 +756,7 @@
 
       #custom-power {
         padding: 0 10px;
-        padding-right: 13px;
+        padding-right: 14px;
         background: #BF616A;
       }
 
