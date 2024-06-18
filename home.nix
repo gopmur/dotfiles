@@ -263,8 +263,11 @@
         nixswitch = "sudo nixos-rebuild switch";
         nixboot = "sudo nixos-rebuild switch";
         nixconfig = "$EDITOR /etc/nixos/configuration.nix";
+        nixgc = "sudo nix-collect-garbage --delete-older-than";
         hmconfig = "$EDITOR ~/.config/home-manager/home.nix";
         hmswitch = "home-manager switch";
+        hmgc = "home-manager expire-generations";
+        term = "kitty & disown";
         hyprconfig = "$EDITOR ~/.config/hypr/hyprland.conf";
         ls = "eza --icons --group-directories-first";
         ll = "eza --icons -l --group-directories-first";
@@ -353,6 +356,7 @@
       pull.rebase = true;
       credential.helper = "store";
       core.editor = "code";
+      gitflow.multi-hotfix = true;
     };
   };
 
@@ -374,7 +378,12 @@
         "wl-paste --type image --watch cliphist store"
       ];
       monitor = "eDP-1, 1920x1080@144, 0x0, 1";
-      env = [ "HYPRCURSOR_SIZE, 24" "HYPRCURSOR_THEME, Nordic-cursors" ];
+      env = [
+        "HYPRCURSOR_SIZE, 24"
+        "HYPRCURSOR_THEME, Nordic-cursors"
+        "XCURSOR_SIZE, 24"
+        "XCURSOR_THEME, Nordic-cursors"
+      ];
 
       input = {
         kb_layout = "us,ir,de";
@@ -387,7 +396,7 @@
 
         touchpad = { natural_scroll = "yes"; };
 
-        sensitivity = 0;
+        sensitivity = 0.1;
       };
 
       general = {
@@ -458,11 +467,14 @@
       misc = {
         # See https://wiki.hyprland.org/Configuring/Variables/ for more
         force_default_wallpaper =
-          -1; # Set to 0 to disable the anime mascot wallpapers
+          0; # Set to 0 to disable the anime mascot wallpapers
       };
       # Example per-device config
       # See https://wiki.hyprland.org/Configuring/Keywords/#executing for more
-      "device:epic-mouse-v1" = { sensitivity = -0.5; };
+      device = {
+        name = "epic-mouse-v1";
+        sensitivity = 0.5;
+      };
 
       # Example windowrule v1
       # windowrule = float, ^(kitty)$
@@ -476,8 +488,12 @@
         "noblur,^(Google-chrome)$"
       ];
 
-      layerrule = "ignorezero, notifications";
-      blurls = "notifications";
+      layerrule = [
+        "ignorezero, notifications"
+        "blur, notifications"
+        "ignorezero, waybar"
+        "blur, waybar"
+      ];
 
       # See https://wiki.hyprland.org/Configuring/Keywords/ for more
       "$mainMod" = "SUPER";
@@ -486,9 +502,9 @@
         # Example binds, see https://wiki.hyprland.org/Configuring/Binds/ for more
         "$mainMod, W, killactive,"
         "$mainMod, Q, togglefloating,"
-        "$mainMod, R, exec, rofi -show drun"
+        "$mainMod, R, exec, wofi --show drun"
         "$mainMod, F, fullscreen, 1"
-        "$mainMod, V, exec, cliphist list | rofi -dmenu | cliphist decode | wl-copy"
+        "$mainMod, V, exec, cliphist list | wofi --dmenu | cliphist decode | wl-copy"
         '', Print, exec, grim -g "$(slurp -d)" - | wl-copy''
 
         # Move focus with mainMod + arrow keys
@@ -527,11 +543,11 @@
         # "$mainMod SHIFT, S, movetoworkspace, special:magic"
 
         # Scroll through existing workspaces with mainMod + scroll
-        "$mainMod, right, workspace, e+1"
-        "$mainMod, left, workspace, e-1"
+        "$mainMod, right, workspace, r+1"
+        "$mainMod, left, workspace, r-1"
 
-        "$mainMod SHIFT, right, movetoworkspace, +1"
-        "$mainMod SHIFT, left, movetoworkspace, -1"
+        "$mainMod SHIFT, right, movetoworkspace, r+1"
+        "$mainMod SHIFT, left, movetoworkspace, r-1"
 
         # Move Windows
         "$mainMod SHIFT, H, movewindow, l"
@@ -561,10 +577,7 @@
         ", XF86MonBrightnessDown, exec, brightnessctl s 5%-"
       ];
 
-      misc = {
-        disable_hyprland_logo = true;
-        force_hypr_chan = false;
-      };
+      misc = { disable_hyprland_logo = true; };
 
     };
   };
@@ -582,7 +595,9 @@
         battery = {
           tooltip = false;
           format-critical =
-            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'>  </span>";
+            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'> </span>";
+          format-warning =
+            "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'> </span>";
           format-charging =
             "{capacity}% <span rise='250' size='large'> {icon}</span> <span rise='250' size='large'> 󱐋</span>";
           format-plugged =
@@ -591,7 +606,10 @@
           format-icons = [ "" "" "" "" "" ];
           max-length = 25;
           interval = 1;
-          states = { critical = 15; };
+          states = {
+            critical = 10;
+            warning = 15;
+          };
         };
 
         backlight = {
@@ -603,7 +621,7 @@
 
         pulseaudio = {
           tooltip = false;
-          format-muted = "<span size='large'>󰸈</span>";
+          format-muted = "<span size='large'></span>";
           format = "{volume}% <span size='large'> {icon}</span>";
           format-icons = {
             headphones = "";
@@ -662,7 +680,7 @@
       }
 
       window#waybar {
-      	background: #4c566a;
+      	background-color: rgba(76, 86, 106, 0.7);
       	color: #ECEFF4;
       	border-radius: 25;
       }
@@ -771,6 +789,11 @@
         background: #BF616A;
       }
 
+      #battery.warning {
+        padding-right: 15px;
+        background: #D08770;
+      }
+
       #battery.plugged {
         padding-right: 15px;
       	color: #ECEFF4;
@@ -778,7 +801,7 @@
       }
 
       #battery.charging {
-        padding-right: 15px;
+        padding-right: 13px;
         color: #ECEFF4;
       	background: #A3BE8C;
       }
@@ -786,7 +809,7 @@
       #backlight {
       	color: #ECEFF4;
       	background: #5E81AC;
-      	padding-right: 20px;
+      	padding-right: 15px;
       }
 
       #pulseaudio {
@@ -796,7 +819,7 @@
 
       #pulseaudio.muted {
       	padding-right: 16px;
-      	padding-left: 15px;
+      	padding-left: 10px;
       	padding-top: 2px;
       	background: #BF616A;
       }
@@ -822,170 +845,216 @@
     };
   };
 
-  programs.rofi = {
-    enable = true;
-    theme = let
-      # Use `mkLiteral` for string-like values that should show without
-      # quotes, e.g.:
-      # {
-      #   foo = "abc"; => foo: "abc";
-      #   bar = mkLiteral "abc"; => bar: abc;
-      # };
-      inherit (config.lib.formats.rasi) mkLiteral;
-    in {
+  # programs.wofi = {
+  #   enable = true;
+  #   theme = let
+  #     # Use `mkLiteral` for string-like values that should show without
+  #     # quotes, e.g.:
+  #     # {
+  #     #   foo = "abc"; => foo: "abc";
+  #     #   bar = mkLiteral "abc"; => bar: abc;
+  #     # };
+  #     inherit (config.lib.formats.rasi) mkLiteral;
+  #   in {
 
-      #
-      # Nordic rofi theme
-      # Adapted by undiabler <undiabler@gmail.com>
-      #
-      # Nord Color palette imported from https://www.nordtheme.com/
-      #
-      configuration = {
-        font = "Envy Code R 10";
-        line-margin = mkLiteral "10";
+  #     #
+  #     # Nordic rofi theme
+  #     # Adapted by undiabler <undiabler@gmail.com>
+  #     #
+  #     # Nord Color palette imported from https://www.nordtheme.com/
+  #     #
+  #     configuration = {
+  #       font = "Envy Code R 10";
+  #       line-margin = mkLiteral "10";
 
-        display-ssh = "";
-        display-run = "";
-        display-drun = "";
-        display-window = "";
-        display-combi = "";
-        show-icons = mkLiteral "true";
-      };
+  #       display-ssh = "";
+  #       display-run = "";
+  #       display-drun = "";
+  #       display-window = "";
+  #       display-combi = "";
+  #       show-icons = mkLiteral "true";
+  #     };
 
-      listview = {
-        lines = mkLiteral "6";
-        columns = mkLiteral "2";
-      };
+  #     listview = {
+  #       lines = mkLiteral "6";
+  #       columns = mkLiteral "2";
+  #     };
 
-      "*" = {
-        nord0 = mkLiteral "#2e3440";
-        nord1 = mkLiteral "#3b4252";
-        nord2 = mkLiteral "#434c5e";
-        nord3 = mkLiteral "#4c566a";
+  #     "*" = {
+  #       nord0 = mkLiteral "#2e3440";
+  #       nord1 = mkLiteral "#3b4252";
+  #       nord2 = mkLiteral "#434c5e";
+  #       nord3 = mkLiteral "#4c566a";
 
-        nord4 = mkLiteral "#d8dee9";
-        nord5 = mkLiteral "#e5e9f0";
-        nord6 = mkLiteral "#eceff4";
+  #       nord4 = mkLiteral "#d8dee9";
+  #       nord5 = mkLiteral "#e5e9f0";
+  #       nord6 = mkLiteral "#eceff4";
 
-        nord7 = mkLiteral "#8fbcbb";
-        nord8 = mkLiteral "#88c0d0";
-        nord9 = mkLiteral "#81a1c1";
-        nord10 = mkLiteral "#5e81ac";
-        nord11 = mkLiteral "#bf616a";
+  #       nord7 = mkLiteral "#8fbcbb";
+  #       nord8 = mkLiteral "#88c0d0";
+  #       nord9 = mkLiteral "#81a1c1";
+  #       nord10 = mkLiteral "#5e81ac";
+  #       nord11 = mkLiteral "#bf616a";
 
-        nord12 = mkLiteral "#d08770";
-        nord13 = mkLiteral "#ebcb8b";
-        nord14 = mkLiteral "#a3be8c";
-        nord15 = mkLiteral "#b48ead";
+  #       nord12 = mkLiteral "#d08770";
+  #       nord13 = mkLiteral "#ebcb8b";
+  #       nord14 = mkLiteral "#a3be8c";
+  #       nord15 = mkLiteral "#b48ead";
 
-        foreground = mkLiteral "@nord9";
-        backlight = mkLiteral "#ccffeedd";
-        background-color = mkLiteral "transparent";
+  #       foreground = mkLiteral "@nord9";
+  #       backlight = mkLiteral "#ccffeedd";
+  #       background-color = mkLiteral "transparent";
 
-        highlight = mkLiteral "underline bold #eceff4";
+  #       highlight = mkLiteral "underline bold #eceff4";
 
-        transparent = mkLiteral "rgba(46,52,64,0)";
-      };
+  #       transparent = mkLiteral "rgba(46,52,64,0)";
+  #     };
 
-      window = {
-        width = mkLiteral "50%";
-        location = mkLiteral "center";
-        anchor = mkLiteral "center";
-        transparency = "real";
-        padding = mkLiteral "1px";
-        border = mkLiteral "0px";
-        border-radius = mkLiteral "6px";
+  #     window = {
+  #       width = mkLiteral "50%";
+  #       location = mkLiteral "center";
+  #       anchor = mkLiteral "center";
+  #       transparency = "real";
+  #       padding = mkLiteral "1px";
+  #       border = mkLiteral "0px";
+  #       border-radius = mkLiteral "6px";
 
-        background-color = mkLiteral "@transparent";
-        spacing = mkLiteral "0";
-        children = mkLiteral "[mainbox]";
-        orientation = mkLiteral "horizontal";
-      };
+  #       background-color = mkLiteral "@transparent";
+  #       spacing = mkLiteral "0";
+  #       children = mkLiteral "[mainbox]";
+  #       orientation = mkLiteral "horizontal";
+  #     };
 
-      mainbox = {
-        spacing = mkLiteral "0";
-        children = mkLiteral "[ inputbar, message, listview ]";
-      };
+  #     mainbox = {
+  #       spacing = mkLiteral "0";
+  #       children = mkLiteral "[ inputbar, message, listview ]";
+  #     };
 
-      message = {
-        color = mkLiteral "@nord0";
-        padding = mkLiteral "5";
-        border-color = mkLiteral "@foreground";
-        border = mkLiteral "0px 2px 2px 2px";
-        background-color = mkLiteral "@nord7";
-      };
+  #     message = {
+  #       color = mkLiteral "@nord0";
+  #       padding = mkLiteral "5";
+  #       border-color = mkLiteral "@foreground";
+  #       border = mkLiteral "0px 2px 2px 2px";
+  #       background-color = mkLiteral "@nord7";
+  #     };
 
-      inputbar = {
-        color = mkLiteral "@nord6";
-        padding = mkLiteral "11px";
-        background-color = mkLiteral "#3b4252";
+  #     inputbar = {
+  #       color = mkLiteral "@nord6";
+  #       padding = mkLiteral "11px";
+  #       background-color = mkLiteral "#3b4252";
 
-        border = mkLiteral "1px";
-        border-radius = mkLiteral "6px 6px 0px 0px";
-        border-color = mkLiteral "@nord10";
-      };
+  #       border = mkLiteral "1px";
+  #       border-radius = mkLiteral "6px 6px 0px 0px";
+  #       border-color = mkLiteral "@nord10";
+  #     };
 
-      "entry, prompt, case-indicator" = {
-        text-font = mkLiteral "inherit";
-        text-color = mkLiteral "inherit";
-      };
+  #     "entry, prompt, case-indicator" = {
+  #       text-font = mkLiteral "inherit";
+  #       text-color = mkLiteral "inherit";
+  #     };
 
-      prompt = { margin = mkLiteral "0px 1em 0em 0em"; };
+  #     prompt = { margin = mkLiteral "0px 1em 0em 0em"; };
 
-      listview = {
-        padding = mkLiteral "8px";
-        border-radius = mkLiteral "0px 0px 6px 6px";
-        border-color = mkLiteral "@nord10";
-        border = mkLiteral "0px 1px 1px 1px";
-        background-color = mkLiteral "rgba(46,52,64,0.9)";
-        dynamic = mkLiteral "false";
-      };
+  #     listview = {
+  #       padding = mkLiteral "8px";
+  #       border-radius = mkLiteral "0px 0px 6px 6px";
+  #       border-color = mkLiteral "@nord10";
+  #       border = mkLiteral "0px 1px 1px 1px";
+  #       background-color = mkLiteral "rgba(46,52,64,0.9)";
+  #       dynamic = mkLiteral "false";
+  #     };
 
-      element = {
-        padding = mkLiteral "3px";
-        vertical-align = mkLiteral "0.5";
-        border-radius = mkLiteral "4px";
-        background-color = mkLiteral "transparent";
-        color = mkLiteral "@foreground";
-        text-color = mkLiteral "rgb(216, 222, 233)";
-      };
+  #     element = {
+  #       padding = mkLiteral "3px";
+  #       vertical-align = mkLiteral "0.5";
+  #       border-radius = mkLiteral "4px";
+  #       background-color = mkLiteral "transparent";
+  #       color = mkLiteral "@foreground";
+  #       text-color = mkLiteral "rgb(216, 222, 233)";
+  #     };
 
-      "element selected.normal" = {
-        background-color = mkLiteral "@nord7";
-        text-color = mkLiteral "#2e3440";
-      };
+  #     "element selected.normal" = {
+  #       background-color = mkLiteral "@nord7";
+  #       text-color = mkLiteral "#2e3440";
+  #     };
 
-      "element-text, element-icon" = {
-        background-color = mkLiteral "inherit";
-        text-color = mkLiteral "inherit";
-      };
+  #     "element-text, element-icon" = {
+  #       background-color = mkLiteral "inherit";
+  #       text-color = mkLiteral "inherit";
+  #     };
 
-      button = {
-        padding = mkLiteral "6px";
-        color = mkLiteral "@foreground";
-        horizontal-align = mkLiteral "0.5";
+  #     button = {
+  #       padding = mkLiteral "6px";
+  #       color = mkLiteral "@foreground";
+  #       horizontal-align = mkLiteral "0.5";
 
-        border = mkLiteral "2px 0px 2px 2px";
-        border-radius = mkLiteral "4px 0px 0px 4px";
-        border-color = mkLiteral "@foreground";
-      };
+  #       border = mkLiteral "2px 0px 2px 2px";
+  #       border-radius = mkLiteral "4px 0px 0px 4px";
+  #       border-color = mkLiteral "@foreground";
+  #     };
 
-      "button selected normal" = {
-        border = mkLiteral "2px 0px 2px 2px";
-        border-color = mkLiteral "@foreground";
-      };
+  #     "button selected normal" = {
+  #       border = mkLiteral "2px 0px 2px 2px";
+  #       border-color = mkLiteral "@foreground";
+  #     };
 
-    };
-  };
+  #   };
+  # };
+
+  programs.wofi = { enable = true; };
 
   programs.helix = {
     enable = true;
-    settings = { theme = "nord"; };
+    settings = {
+      theme = "nord";
+      editor = {
+        auto-save = true;
+        cursor-shape.insert = "bar";
+        cursor-shape.normal = "block";
+        cursor-shape.select = "underline";
+      };
+    };
     themes = {
       nord = {
         inherits = "nord";
         "ui.background" = "none";
       };
+    };
+    languages = {
+      language = [
+        {
+          name = "typescript";
+          auto-format = false;
+          formatter = {
+            command = "npx";
+            args = [ "prettier" "--parser" "typescript" ];
+          };
+        }
+        {
+          name = "javascript";
+          auto-format = false;
+          formatter = {
+            command = "npx";
+            args = [ "prettier" "--parser" "javascriopt" ];
+          };
+        }
+        {
+          name = "jsx";
+          auto-format = false;
+          formatter = {
+            command = "npx";
+            args = [ "prettier" "--parser" "babel" ];
+          };
+        }
+        {
+          name = "tsx";
+          auto-format = false;
+          formatter = {
+            command = "npx";
+            args = [ "prettier" "--parser" "babel-ts" ];
+          };
+        }
+      ];
     };
   };
 
